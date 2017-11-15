@@ -1,5 +1,5 @@
-#ifndef SINGLY_LINKED_LIST_H
-#define SINGLY_LINKED_LIST_H
+#ifndef SSLL_H
+#define SSLL_H
 
 #include "List.h"
 #include <iostream>
@@ -9,14 +9,14 @@
 namespace cop3530 {
 //Look to see f there are any functions I am not overriding.
 template < typename E >
-class Singly_Linked_List : public List<E> {
+class SSLL : public List<E> {
 public:
-    Singly_Linked_List(); //constructor
-    ~Singly_Linked_List() override; //destructor
-    Singly_Linked_List(Singly_Linked_List<E>& ssl); //copy constructor
-    Singly_Linked_List(Singly_Linked_List<E>&& ssl); //move constructor
-    Singly_Linked_List<E>& operator=(Singly_Linked_List<E>& ssl); // copy assignment operator
-    Singly_Linked_List<E>& operator=(Singly_Linked_List<E>&& ssl); // move assignment
+    SSLL(); //constructor
+    ~SSLL() override; //destructor
+    SSLL(SSLL<E>& ssl); //copy constructor
+    SSLL(SSLL<E>&& ssl); //move constructor
+    SSLL<E>& operator=(SSLL<E>& ssl); // copy assignment operator
+    SSLL<E>& operator=(SSLL<E>&& ssl); // move assignment
 
     void insert( E element, size_t position ) override;
     void push_back( E element ) override;
@@ -66,18 +66,18 @@ public:
         using self_reference = typename List<T>::Iter&;
 
         // iterators over a non-const List
-        static SSL_Iter make_begin( Singly_Linked_List<value_type>& s) {
+        static SSL_Iter make_begin( SSLL<value_type>& s) {
             SSL_Iter<T> i( s, s.head );
             return i;
         };
 
-        static SSL_Iter make_end( Singly_Linked_List<value_type>& s) {
+        static SSL_Iter make_end( SSLL<value_type>& s) {
             //------------------need to do------------------------
             SSL_Iter<T> i( s, s.head );
             return i;
         };
 
-        SSL_Iter( Singly_Linked_List<value_type>& list, Node* start ) {
+        SSL_Iter( SSLL<value_type>& list, Node* start ) {
             here = start;
             ssl = list;
         };
@@ -113,7 +113,7 @@ public:
         //-------------------------------------------------------------------
         
     private:
-        Singly_Linked_List<value_type>& ssl;
+        SSLL<value_type>& ssl;
         Node* here;
     };
 
@@ -129,25 +129,25 @@ public:
 };
 
 template <typename E>
-Singly_Linked_List<E>::Node::Node(Node * n, E d) {
+SSLL<E>::Node::Node(Node * n, E d) {
     next = n;
     data = d;
 }
 
 template <typename E>
-Singly_Linked_List<E>::Node::~Node() {
+SSLL<E>::Node::~Node() {
     //delete
 }
 
 //Construtor
 template <typename E>
-Singly_Linked_List<E>::Singly_Linked_List() {
+SSLL<E>::SSLL() {
     head = nullptr; 
 };
 
 //Destructor
 template <typename E>
-Singly_Linked_List<E>::~Singly_Linked_List() {
+SSLL<E>::~SSLL() {
     Node* temp;
     while(head) {
         temp = head;
@@ -158,7 +158,7 @@ Singly_Linked_List<E>::~Singly_Linked_List() {
 
 //copy constructor
 template <typename E>
-Singly_Linked_List<E>::Singly_Linked_List(Singly_Linked_List<E>& ssl) { 
+SSLL<E>::SSLL(SSLL<E>& ssl) { 
     head = nullptr;
     size_t size = ssl.length();
     //TODO: replace with iterator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -168,14 +168,14 @@ Singly_Linked_List<E>::Singly_Linked_List(Singly_Linked_List<E>& ssl) {
 
 //move constructor
 template <typename E>
-Singly_Linked_List<E>::Singly_Linked_List(Singly_Linked_List<E>&& ssl) {
+SSLL<E>::SSLL(SSLL<E>&& ssl) {
     head = ssl.head;
     ssl.head = nullptr;
 };
 
 // copy assignment operator
 template <typename E>
-Singly_Linked_List<E>& Singly_Linked_List<E>::operator=(Singly_Linked_List<E>& ssl) {
+SSLL<E>& SSLL<E>::operator=(SSLL<E>& ssl) {
     Node* temp;
     while(head) {
         temp = head;
@@ -194,7 +194,7 @@ Singly_Linked_List<E>& Singly_Linked_List<E>::operator=(Singly_Linked_List<E>& s
 
 // move assignment
 template <typename E>
-Singly_Linked_List<E>& Singly_Linked_List<E>::operator=(Singly_Linked_List<E>&& ssl) {
+SSLL<E>& SSLL<E>::operator=(SSLL<E>&& ssl) {
     
     if(this!=&ssl) // prevent self-move
     {
@@ -212,7 +212,7 @@ Singly_Linked_List<E>& Singly_Linked_List<E>::operator=(Singly_Linked_List<E>&& 
 };
 
 template <typename E>
-void Singly_Linked_List<E>::insert( E element, size_t position ) {
+void SSLL<E>::insert( E element, size_t position ) {
     Node* temp = head;
     for(int i = 0; i < (position - 1); i++)
         temp = temp->next;
@@ -220,7 +220,7 @@ void Singly_Linked_List<E>::insert( E element, size_t position ) {
 };
 
 template <typename E>
-void Singly_Linked_List<E>::push_back( E element ) {
+void SSLL<E>::push_back( E element ) {
     if(is_empty())  {
         head = new Node(nullptr, element);
     }
@@ -236,12 +236,12 @@ void Singly_Linked_List<E>::push_back( E element ) {
 };
 
 template <typename E>
-void Singly_Linked_List<E>::push_front( E element ) {
+void SSLL<E>::push_front( E element ) {
     head = new Node(head, element);
 };
 
 template <typename E>
-void Singly_Linked_List<E>::replace( E element, size_t position ) {
+void SSLL<E>::replace( E element, size_t position ) {
     Node* temp = head;
     for(int i = 0; i < (position - 1); i++)
         temp = temp->next;
@@ -250,9 +250,9 @@ void Singly_Linked_List<E>::replace( E element, size_t position ) {
 
 
 template <typename E>
-E Singly_Linked_List<E>::pop_back() {
+E SSLL<E>::pop_back() {
     if(is_empty())
-        throw std::runtime_error( "Singly_Linked_List<E>::pop_back(): empty list" );
+        throw std::runtime_error( "SSLL<E>::pop_back(): empty list" );
 
     Node* temp = head;
     Node* further = nullptr;
@@ -274,9 +274,9 @@ E Singly_Linked_List<E>::pop_back() {
 };
 
 template <typename E>
-E Singly_Linked_List<E>::pop_front() {
+E SSLL<E>::pop_front() {
     if(is_empty())
-        throw std::runtime_error( "Singly_Linked_List<E>::pop_front(): empty list" );
+        throw std::runtime_error( "SSLL<E>::pop_front(): empty list" );
 
     Node* temp = head;
     head = temp->next;
@@ -284,7 +284,7 @@ E Singly_Linked_List<E>::pop_front() {
 };
 
 template <typename E>
-E Singly_Linked_List<E>::item_at( size_t position ) {
+E SSLL<E>::item_at( size_t position ) {
     Node* temp = head;
     for(int i = 0; i < position; i++)
         temp = temp->next;
@@ -292,9 +292,9 @@ E Singly_Linked_List<E>::item_at( size_t position ) {
 };
 
 template <typename E>
-E Singly_Linked_List<E>::peek_back() {
+E SSLL<E>::peek_back() {
     if(is_empty())
-        throw std::runtime_error( "Singly_Linked_List<E>::peek_back(): empty list" );
+        throw std::runtime_error( "SSLL<E>::peek_back(): empty list" );
 
     Node* temp = head;
     Node* val = nullptr;
@@ -306,14 +306,14 @@ E Singly_Linked_List<E>::peek_back() {
 };
 
 template <typename E>
-E Singly_Linked_List<E>::peek_front() {
+E SSLL<E>::peek_front() {
     if( is_empty())
-        throw std::runtime_error( "Singly_Linked_List<E>::peek_back(): empty list" );
+        throw std::runtime_error( "SSLL<E>::peek_back(): empty list" );
     return head->data;
 };
 
 template <typename E>
-void Singly_Linked_List<E>::remove( size_t position ) {
+void SSLL<E>::remove( size_t position ) {
     Node* temp = head;
     for(int i = 0; i < (position - 1); i++)
         temp = temp->next;
@@ -322,17 +322,17 @@ void Singly_Linked_List<E>::remove( size_t position ) {
 
 
 template <typename E>
-bool Singly_Linked_List<E>::is_empty() {
+bool SSLL<E>::is_empty() {
     return !head;
 };
 
 template <typename E>
-bool Singly_Linked_List<E>::is_full() {
+bool SSLL<E>::is_full() {
     return false;
 };
 
 template <typename E>
-bool Singly_Linked_List<E>::contains( E element, bool (*equals_function)(E,E)) {
+bool SSLL<E>::contains( E element, bool (*equals_function)(E,E)) {
     Node* temp = head;
     while(temp) {
         if(equals_function(temp->data, element)) return true;
@@ -343,7 +343,7 @@ bool Singly_Linked_List<E>::contains( E element, bool (*equals_function)(E,E)) {
 
 
 template <typename E>
-size_t Singly_Linked_List<E>::length() {
+size_t SSLL<E>::length() {
     Node* temp = head;
     size_t counter = 0;
     while(temp) {
@@ -354,12 +354,12 @@ size_t Singly_Linked_List<E>::length() {
 };
 
 template <typename E>
-void Singly_Linked_List<E>::clear() {
+void SSLL<E>::clear() {
     head = nullptr;
 };
 
 template <typename E>
-void Singly_Linked_List<E>::print( std::ostream stream ) {
+void SSLL<E>::print( std::ostream stream ) {
     /*Node* temp = head;
     
     if(!temp) {
@@ -376,8 +376,8 @@ void Singly_Linked_List<E>::print( std::ostream stream ) {
 };
 
 template <typename E>
-E* Singly_Linked_List<E>::contents() {
-    size_t length = Singly_Linked_List<E>::length();
+E* SSLL<E>::contents() {
+    size_t length = SSLL<E>::length();
     E* array = new E[length];
     Node* temp = head;
     for(int i = 0; i < length; i++){

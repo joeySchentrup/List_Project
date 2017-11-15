@@ -1,5 +1,5 @@
-#ifndef SIMPLE_DYNAMIC_ARRAY_LIST_H
-#define SIMPLE_DYNAMIC_ARRAY_LIST_H
+#ifndef SDAL_H
+#define SDAL_H
 
 #include "List.h"
 #include <iostream>
@@ -7,14 +7,14 @@
 namespace cop3530 {
 
 template < typename E >
-class Simple_Dynamic_Array_List : public List<E> {
+class SDAL : public List<E> {
 public:
-    Simple_Dynamic_Array_List(size_t size);
-    ~Simple_Dynamic_Array_List() override;
-    Simple_Dynamic_Array_List(Simple_Dynamic_Array_List<E>& sdal); //copy constructor
-    Simple_Dynamic_Array_List(Simple_Dynamic_Array_List<E>&& sdal); //move constructor
-    Simple_Dynamic_Array_List<E>& operator=(Simple_Dynamic_Array_List<E>& sdal); // copy assignment operator
-    Simple_Dynamic_Array_List<E>& operator=(Simple_Dynamic_Array_List<E>&& sdal); // move assignment
+    SDAL(size_t size);
+    ~SDAL() override;
+    SDAL(SDAL<E>& sdal); //copy constructor
+    SDAL(SDAL<E>&& sdal); //move constructor
+    SDAL<E>& operator=(SDAL<E>& sdal); // copy assignment operator
+    SDAL<E>& operator=(SDAL<E>&& sdal); // move assignment
 
     void insert( E element, size_t position ) override;
     void push_back( E element ) override;
@@ -50,7 +50,7 @@ private:
 //Public functions
 
 template <typename E>
-Simple_Dynamic_Array_List<E>::Simple_Dynamic_Array_List(size_t size = 50) {
+SDAL<E>::SDAL(size_t size = 50) {
     if(size < 2)
         throw std::runtime_error( "SDAL:In constructor: size needs to be at least 2." );
     
@@ -60,13 +60,13 @@ Simple_Dynamic_Array_List<E>::Simple_Dynamic_Array_List(size_t size = 50) {
 };
 
 template <typename E>
-Simple_Dynamic_Array_List<E>::~Simple_Dynamic_Array_List() {
+SDAL<E>::~SDAL() {
     delete array;
 };
 
 //copy constructor
 template <typename E>
-Simple_Dynamic_Array_List<E>::Simple_Dynamic_Array_List(Simple_Dynamic_Array_List<E>& sdal) { 
+SDAL<E>::SDAL(SDAL<E>& sdal) { 
     tail = sdal.length();
     length_of_array = tail;
     array = new E[tail];
@@ -76,7 +76,7 @@ Simple_Dynamic_Array_List<E>::Simple_Dynamic_Array_List(Simple_Dynamic_Array_Lis
 
 //move constructor
 template <typename E>
-Simple_Dynamic_Array_List<E>::Simple_Dynamic_Array_List(Simple_Dynamic_Array_List<E>&& sdal) {
+SDAL<E>::SDAL(SDAL<E>&& sdal) {
     tail = sdal.tail;
     length_of_array = sdal.length_of_array;
     array = sdal.array;
@@ -85,7 +85,7 @@ Simple_Dynamic_Array_List<E>::Simple_Dynamic_Array_List(Simple_Dynamic_Array_Lis
 
 // copy assignment operator
 template <typename E>
-Simple_Dynamic_Array_List<E>& Simple_Dynamic_Array_List<E>::operator=(Simple_Dynamic_Array_List<E>& sdal) {
+SDAL<E>& SDAL<E>::operator=(SDAL<E>& sdal) {
     delete array;
 
     tail = sdal.tail;
@@ -99,7 +99,7 @@ Simple_Dynamic_Array_List<E>& Simple_Dynamic_Array_List<E>::operator=(Simple_Dyn
 
 // move assignment
 template <typename E>
-Simple_Dynamic_Array_List<E>& Simple_Dynamic_Array_List<E>::operator=(Simple_Dynamic_Array_List<E>&& sdal) {
+SDAL<E>& SDAL<E>::operator=(SDAL<E>&& sdal) {
     
     if(this!=&sdal) // prevent self-move
     {
@@ -114,7 +114,7 @@ Simple_Dynamic_Array_List<E>& Simple_Dynamic_Array_List<E>::operator=(Simple_Dyn
 
 
 template <typename E>
-void Simple_Dynamic_Array_List<E>::insert( E element, size_t position ) {
+void SDAL<E>::insert( E element, size_t position ) {
 
     if(is_empty())
         throw std::runtime_error( "SDAL:In insert(): list is empty." );
@@ -129,22 +129,21 @@ void Simple_Dynamic_Array_List<E>::insert( E element, size_t position ) {
 };
 
 template <typename E>
-void Simple_Dynamic_Array_List<E>::push_back( E element ) {
+void SDAL<E>::push_back( E element ) {
     array[tail] = element;
     next_index();
 };
 
 template <typename E>
-void Simple_Dynamic_Array_List<E>::push_front( E element ) {
+void SDAL<E>::push_front( E element ) {
     for(int i = tail; i > 0; i--)
         array[i] = array[i-1];
-    
     array[0] = element;
     next_index();
 };
 
 template <typename E>
-void Simple_Dynamic_Array_List<E>::replace( E element, size_t position ) {
+void SDAL<E>::replace( E element, size_t position ) {
     if(is_empty())
         throw std::runtime_error( "SDAL:In replace(): list is empty." );
     if(position >= tail || position < 0)
@@ -155,7 +154,7 @@ void Simple_Dynamic_Array_List<E>::replace( E element, size_t position ) {
 
 
 template <typename E>
-E Simple_Dynamic_Array_List<E>::pop_back() {
+E SDAL<E>::pop_back() {
     if(is_empty())
         throw std::runtime_error( "SDAL:In pop_back(): list is empty." );
     
@@ -164,7 +163,7 @@ E Simple_Dynamic_Array_List<E>::pop_back() {
 };
 
 template <typename E>
-E Simple_Dynamic_Array_List<E>::pop_front() {
+E SDAL<E>::pop_front() {
     if(is_empty())
         throw std::runtime_error( "SDAL:In pop_front(): list is empty." );
 
@@ -178,7 +177,7 @@ E Simple_Dynamic_Array_List<E>::pop_front() {
 };
 
 template <typename E>
-E Simple_Dynamic_Array_List<E>::item_at( size_t position) {
+E SDAL<E>::item_at( size_t position) {
     if(is_empty())
         throw std::runtime_error( "SDAL:In item_at(): list is empty." );
     if(position >= tail  || position < 0) 
@@ -188,7 +187,7 @@ E Simple_Dynamic_Array_List<E>::item_at( size_t position) {
 };
 
 template <typename E>
-E Simple_Dynamic_Array_List<E>::peek_back() {
+E SDAL<E>::peek_back() {
     if(is_empty())
         throw std::runtime_error( "SDAL:In peek_back(): list is empty." );
 
@@ -196,7 +195,7 @@ E Simple_Dynamic_Array_List<E>::peek_back() {
 };
 
 template <typename E>
-E Simple_Dynamic_Array_List<E>::peek_front() {
+E SDAL<E>::peek_front() {
     if(is_empty())
         throw std::runtime_error( "SDAL:In peek_front(): list is empty." );
 
@@ -204,7 +203,7 @@ E Simple_Dynamic_Array_List<E>::peek_front() {
 };
 
 template <typename E>
-void Simple_Dynamic_Array_List<E>::remove( size_t position ) {
+void SDAL<E>::remove( size_t position ) {
     if(is_empty())
         throw std::runtime_error( "SDAL:In remove(): list is empty." );
     if(position >= tail  || position < 0)
@@ -217,17 +216,17 @@ void Simple_Dynamic_Array_List<E>::remove( size_t position ) {
 };
 
 template <typename E>
-bool Simple_Dynamic_Array_List<E>::is_empty() {
+bool SDAL<E>::is_empty() {
     return tail == 0;
 };
 
 template <typename E>
-bool Simple_Dynamic_Array_List<E>::is_full() {
+bool SDAL<E>::is_full() {
     return false;
 };
 
 template <typename E>
-bool Simple_Dynamic_Array_List<E>::contains( E element, bool (*equals_function)(E,E)) {
+bool SDAL<E>::contains( E element, bool (*equals_function)(E,E)) {
     E temp;
     for(int i = 0; i < tail; i++) {
         if(equals_function(array[i], element)) return true;
@@ -237,17 +236,17 @@ bool Simple_Dynamic_Array_List<E>::contains( E element, bool (*equals_function)(
 
 
 template <typename E>
-size_t Simple_Dynamic_Array_List<E>::length() {
+size_t SDAL<E>::length() {
     return tail;
 };
 
 template <typename E>
-void Simple_Dynamic_Array_List<E>::clear() {
+void SDAL<E>::clear() {
     tail = 0;
 };
 
 template <typename E>
-void Simple_Dynamic_Array_List<E>::print( std::ostream stream ) {
+void SDAL<E>::print( std::ostream stream ) {
     /*Node* temp = head_active;
     
     if(!temp) {
@@ -264,7 +263,7 @@ void Simple_Dynamic_Array_List<E>::print( std::ostream stream ) {
 };
 
 template <typename E>
-E* Simple_Dynamic_Array_List<E>::contents() {
+E* SDAL<E>::contents() {
     E* new_array = new E[length()];
     
     for(int i = 0; i < length(); i++) {
@@ -277,7 +276,7 @@ E* Simple_Dynamic_Array_List<E>::contents() {
 //Private functions
 
 template <typename E>
-void Simple_Dynamic_Array_List<E>::next_index() {
+void SDAL<E>::next_index() {
     ++tail;
 
     if(tail >= length_of_array) {
@@ -293,10 +292,10 @@ void Simple_Dynamic_Array_List<E>::next_index() {
 };
 
 template <typename E>
-void Simple_Dynamic_Array_List<E>::previous_index() {
+void SDAL<E>::previous_index() {
     --tail;
     
-    if(tail > length_of_array/2 && tail > 101) {
+    if(tail < length_of_array/2 && tail > 100) {
         size_t new_length = length_of_array - length_of_array/4;
         E* new_array = new E[new_length];
         

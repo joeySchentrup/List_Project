@@ -1,5 +1,5 @@
-#ifndef CHAINED_DYNAMIC_ARRAY_LIST_H
-#define CHAINED_DYNAMIC_ARRAY_LIST_H
+#ifndef CDAL_H
+#define CDAL_H
 
 #include "List.h"
 #include<iostream>
@@ -9,14 +9,14 @@ namespace cop3530 {
 const int ARRAY_SIZE = 50;
 
 template < typename E >
-class Chained_Dynamic_Array_List : public List<E> {
+class CDAL : public List<E> {
 public:
-    Chained_Dynamic_Array_List();
-    ~Chained_Dynamic_Array_List() override;
-    Chained_Dynamic_Array_List(Chained_Dynamic_Array_List<E>& cdal); //copy constructor
-    Chained_Dynamic_Array_List(Chained_Dynamic_Array_List<E>&& cdal); //move constructor
-    Chained_Dynamic_Array_List<E>& operator=(Chained_Dynamic_Array_List<E>& cdal); // copy assignment operator
-    Chained_Dynamic_Array_List<E>& operator=(Chained_Dynamic_Array_List<E>&& cdal); // move assignment
+    CDAL();
+    ~CDAL() override;
+    CDAL(CDAL<E>& cdal); //copy constructor
+    CDAL(CDAL<E>&& cdal); //move constructor
+    CDAL<E>& operator=(CDAL<E>& cdal); // copy assignment operator
+    CDAL<E>& operator=(CDAL<E>&& cdal); // move assignment
 
     void insert( E element, size_t position ) override;
     void push_back( E element ) override;
@@ -58,7 +58,7 @@ private:
 //Public functions
 
 template <typename E>
-Chained_Dynamic_Array_List<E>::Node::Node(Node * next_node, Node * previous_node, E first_element) {
+CDAL<E>::Node::Node(Node * next_node, Node * previous_node, E first_element) {
     next = next_node;
     previous = previous_node;
 
@@ -68,18 +68,18 @@ Chained_Dynamic_Array_List<E>::Node::Node(Node * next_node, Node * previous_node
 }
 
 template <typename E>
-Chained_Dynamic_Array_List<E>::Node::~Node() {
+CDAL<E>::Node::~Node() {
     delete data;
 }
 
 template <typename E>
-Chained_Dynamic_Array_List<E>::Chained_Dynamic_Array_List() {
+CDAL<E>::CDAL() {
     head = nullptr; 
     tail = 0;
 };
 
 template <typename E>
-Chained_Dynamic_Array_List<E>::~Chained_Dynamic_Array_List() {
+CDAL<E>::~CDAL() {
     Node* n = nullptr;
     while(head) {
         n = head;
@@ -92,7 +92,7 @@ Chained_Dynamic_Array_List<E>::~Chained_Dynamic_Array_List() {
 
 //copy constructor
 template <typename E>
-Chained_Dynamic_Array_List<E>::Chained_Dynamic_Array_List(Chained_Dynamic_Array_List<E>& cdal) { 
+CDAL<E>::CDAL(CDAL<E>& cdal) { 
     head = nullptr;
     size_t size = cdal.length();
     //TODO: replace with iterator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -102,14 +102,14 @@ Chained_Dynamic_Array_List<E>::Chained_Dynamic_Array_List(Chained_Dynamic_Array_
 
 //move constructor
 template <typename E>
-Chained_Dynamic_Array_List<E>::Chained_Dynamic_Array_List(Chained_Dynamic_Array_List<E>&& cdal) {
+CDAL<E>::CDAL(CDAL<E>&& cdal) {
     head = cdal.head;
     cdal.head = nullptr;
 };
 
 // copy assignment operator
 template <typename E>
-Chained_Dynamic_Array_List<E>& Chained_Dynamic_Array_List<E>::operator=(Chained_Dynamic_Array_List<E>& cdal) {
+CDAL<E>& CDAL<E>::operator=(CDAL<E>& cdal) {
     Node* temp;
     while(head) {
         temp = head;
@@ -128,7 +128,7 @@ Chained_Dynamic_Array_List<E>& Chained_Dynamic_Array_List<E>::operator=(Chained_
 
 // move assignment
 template <typename E>
-Chained_Dynamic_Array_List<E>& Chained_Dynamic_Array_List<E>::operator=(Chained_Dynamic_Array_List<E>&& cdal) {
+CDAL<E>& CDAL<E>::operator=(CDAL<E>&& cdal) {
     
     if(this!=&cdal) // prevent self-move
     {
@@ -149,7 +149,7 @@ Chained_Dynamic_Array_List<E>& Chained_Dynamic_Array_List<E>::operator=(Chained_
 
 //untested. Done?
 template <typename E>
-void Chained_Dynamic_Array_List<E>::insert( E element, size_t position ) {
+void CDAL<E>::insert( E element, size_t position ) {
     if(is_empty())
         throw std::runtime_error( "CDAL:In insert(): list is empty." );
     if(position >= tail || position < 0)
@@ -185,7 +185,7 @@ void Chained_Dynamic_Array_List<E>::insert( E element, size_t position ) {
 };
 
 template <typename E>
-void Chained_Dynamic_Array_List<E>::push_back( E element ) {
+void CDAL<E>::push_back( E element ) {
     if(is_empty() && !head) {
         head = new Node(nullptr, nullptr, element);        
     } else if (is_empty()) {
@@ -207,7 +207,7 @@ void Chained_Dynamic_Array_List<E>::push_back( E element ) {
 };
 
 template <typename E>
-void Chained_Dynamic_Array_List<E>::push_front( E element ) {
+void CDAL<E>::push_front( E element ) {
     if(is_empty() && !head) {
         head = new Node(nullptr, nullptr, element);        
     } else if (is_empty()) {
@@ -240,7 +240,7 @@ void Chained_Dynamic_Array_List<E>::push_front( E element ) {
 };
 
 template <typename E>
-void Chained_Dynamic_Array_List<E>::replace( E element, size_t position ) {
+void CDAL<E>::replace( E element, size_t position ) {
     if(is_empty())
         throw std::runtime_error( "CDAL:In insert(): list is empty." );
     if(position >= tail || position < 0)
@@ -262,9 +262,9 @@ void Chained_Dynamic_Array_List<E>::replace( E element, size_t position ) {
 
 
 template <typename E>
-E Chained_Dynamic_Array_List<E>::pop_back() {
+E CDAL<E>::pop_back() {
     if( is_empty())
-        throw std::runtime_error( "Chained_Dynamic_Array_List<E>::pop_back(): empty list" );
+        throw std::runtime_error( "CDAL<E>::pop_back(): empty list" );
     
     Node* temp = head;
     int counter = -1;
@@ -281,9 +281,9 @@ E Chained_Dynamic_Array_List<E>::pop_back() {
 };
 
 template <typename E>
-E Chained_Dynamic_Array_List<E>::pop_front() {
+E CDAL<E>::pop_front() {
     if(is_empty()) {
-        throw std::runtime_error( "Chained_Dynamic_Array_List<E>::pop_front(): empty list" );
+        throw std::runtime_error( "CDAL<E>::pop_front(): empty list" );
     } else {
         Node* temp = head;
         E element = head->data[0];
@@ -304,7 +304,7 @@ E Chained_Dynamic_Array_List<E>::pop_front() {
 };
 
 template <typename E>
-E Chained_Dynamic_Array_List<E>::item_at( size_t position ) {
+E CDAL<E>::item_at( size_t position ) {
     if(is_empty())
         throw std::runtime_error( "CDAL:In insert(): list is empty." );
     if(position >= tail || position < 0)
@@ -325,9 +325,9 @@ E Chained_Dynamic_Array_List<E>::item_at( size_t position ) {
 };
 
 template <typename E>
-E Chained_Dynamic_Array_List<E>::peek_back() {
+E CDAL<E>::peek_back() {
     if( is_empty())
-        throw std::runtime_error( "Chained_Dynamic_Array_List<E>::peek_back(): empty list" );
+        throw std::runtime_error( "CDAL<E>::peek_back(): empty list" );
 
     Node* temp = head;
     int counter = -1;
@@ -339,14 +339,14 @@ E Chained_Dynamic_Array_List<E>::peek_back() {
 };
 
 template <typename E>
-E Chained_Dynamic_Array_List<E>::peek_front() {
+E CDAL<E>::peek_front() {
     if( is_empty())
-        throw std::runtime_error( "Chained_Dynamic_Array_List<E>::peek_front(): empty list" );
+        throw std::runtime_error( "CDAL<E>::peek_front(): empty list" );
     return head->data[0];
 };
 
 template <typename E>
-void Chained_Dynamic_Array_List<E>::remove( size_t position ) {
+void CDAL<E>::remove( size_t position ) {
     if(is_empty())
         throw std::runtime_error( "CDAL:In insert(): list is empty." );
     if(position >= tail || position < 0)
@@ -381,17 +381,17 @@ void Chained_Dynamic_Array_List<E>::remove( size_t position ) {
 };
 
 template <typename E>
-bool Chained_Dynamic_Array_List<E>::is_empty() {
+bool CDAL<E>::is_empty() {
     return tail == 0;
 };
 
 template <typename E>
-bool Chained_Dynamic_Array_List<E>::is_full() {
+bool CDAL<E>::is_full() {
     return false;
 };
 
 template <typename E>
-bool Chained_Dynamic_Array_List<E>::contains( E element, bool (*equals_function)(E,E)) {
+bool CDAL<E>::contains( E element, bool (*equals_function)(E,E)) {
     Node* temp = head;
     int counter = -1;
 
@@ -406,17 +406,17 @@ bool Chained_Dynamic_Array_List<E>::contains( E element, bool (*equals_function)
 
 
 template <typename E>
-size_t Chained_Dynamic_Array_List<E>::length() {
+size_t CDAL<E>::length() {
     return tail;
 };
 
 template <typename E>
-void Chained_Dynamic_Array_List<E>::clear() {
+void CDAL<E>::clear() {
     tail = 0;
 };
 
 template <typename E>
-void Chained_Dynamic_Array_List<E>::print( std::ostream stream ) {
+void CDAL<E>::print( std::ostream stream ) {
     /*Node* temp = head;
     
     if(!temp) {
@@ -433,7 +433,7 @@ void Chained_Dynamic_Array_List<E>::print( std::ostream stream ) {
 };
 
 template <typename E>
-E* Chained_Dynamic_Array_List<E>::contents() {
+E* CDAL<E>::contents() {
     size_t size = length();
     E* array = new E[size];
     Node* temp = head;

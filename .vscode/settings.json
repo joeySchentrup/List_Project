@@ -33,6 +33,23 @@
         "xlocnum": "cpp",
         "xmemory0": "cpp",
         "xstddef": "cpp",
-        "xtr1common": "cpp"
+        "xtr1common": "cpp",
+        "algorithm": "cpp",
+        "cctype": "cpp",
+        "chrono": "cpp",
+        "ctime": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "map": "cpp",
+        "memory": "cpp",
+        "ratio": "cpp",
+        "set": "cpp",
+        "sstream": "cpp",
+        "tuple": "cpp",
+        "vector": "cpp",
+        "xlocmon": "cpp",
+        "xloctime": "cpp",
+        "xmemory": "cpp",
+        "xtree": "cpp"
     }
 }

@@ -1,5 +1,5 @@
-#ifndef POOLED_SINGLY_LINKED_LIST_H
-#define POOLED_SINGLY_LINKED_LIST_H
+#ifndef PSLL_H
+#define PSLL_H
 
 #include "List.h"
 #include <iostream>
@@ -7,14 +7,14 @@
 namespace cop3530 {
 
 template < typename E >
-class Pooled_Singly_Linked_List : public List<E> {
+class PSLL : public List<E> {
 public:
-    Pooled_Singly_Linked_List();
-    ~Pooled_Singly_Linked_List() override;
-    Pooled_Singly_Linked_List(Pooled_Singly_Linked_List<E>& ssl); //copy constructor
-    Pooled_Singly_Linked_List(Pooled_Singly_Linked_List<E>&& ssl); //move constructor
-    Pooled_Singly_Linked_List<E>& operator=(Pooled_Singly_Linked_List<E>& ssl); // copy assignment operator
-    Pooled_Singly_Linked_List<E>& operator=(Pooled_Singly_Linked_List<E>&& ssl); // move assignment
+    PSLL();
+    ~PSLL() override;
+    PSLL(PSLL<E>& ssl); //copy constructor
+    PSLL(PSLL<E>&& ssl); //move constructor
+    PSLL<E>& operator=(PSLL<E>& ssl); // copy assignment operator
+    PSLL<E>& operator=(PSLL<E>&& ssl); // move assignment
 
 
     void insert( E element, size_t position ) override;
@@ -60,18 +60,18 @@ private:
 //Public functions
 
 template <typename E>
-Pooled_Singly_Linked_List<E>::Node::Node(Node * n, E d) {
+PSLL<E>::Node::Node(Node * n, E d) {
     next = n;
     data = d;
 }
 
 template <typename E>
-Pooled_Singly_Linked_List<E>::Node::~Node() {
+PSLL<E>::Node::~Node() {
     //delete
 }
 
 template <typename E>
-Pooled_Singly_Linked_List<E>::Pooled_Singly_Linked_List() {
+PSLL<E>::PSLL() {
     head_active = nullptr; 
     head_pool = nullptr;
     pool_size = 0;
@@ -79,7 +79,7 @@ Pooled_Singly_Linked_List<E>::Pooled_Singly_Linked_List() {
 };
 
 template <typename E>
-Pooled_Singly_Linked_List<E>::~Pooled_Singly_Linked_List() {
+PSLL<E>::~PSLL() {
     Node* temp;
     while(head_active) {
         temp = head_active;
@@ -97,7 +97,7 @@ Pooled_Singly_Linked_List<E>::~Pooled_Singly_Linked_List() {
 
 //copy constructor
 template <typename E>
-Pooled_Singly_Linked_List<E>::Pooled_Singly_Linked_List(Pooled_Singly_Linked_List<E>& psll) { 
+PSLL<E>::PSLL(PSLL<E>& psll) { 
     head_active = nullptr;
     head_pool = nullptr;
     size_t size = psll.length();
@@ -108,7 +108,7 @@ Pooled_Singly_Linked_List<E>::Pooled_Singly_Linked_List(Pooled_Singly_Linked_Lis
 
 //move constructor
 template <typename E>
-Pooled_Singly_Linked_List<E>::Pooled_Singly_Linked_List(Pooled_Singly_Linked_List<E>&& psll) {
+PSLL<E>::PSLL(PSLL<E>&& psll) {
     head_active = psll.head;
     psll.head = nullptr;
     Node* temp;
@@ -121,7 +121,7 @@ Pooled_Singly_Linked_List<E>::Pooled_Singly_Linked_List(Pooled_Singly_Linked_Lis
 
 // copy assignment operator
 template <typename E>
-Pooled_Singly_Linked_List<E>& Pooled_Singly_Linked_List<E>::operator=(Pooled_Singly_Linked_List<E>& psll) {
+PSLL<E>& PSLL<E>::operator=(PSLL<E>& psll) {
     Node* temp;
     while(head_active) {
         temp = head_active;
@@ -140,7 +140,7 @@ Pooled_Singly_Linked_List<E>& Pooled_Singly_Linked_List<E>::operator=(Pooled_Sin
 
 // move assignment
 template <typename E>
-Pooled_Singly_Linked_List<E>& Pooled_Singly_Linked_List<E>::operator=(Pooled_Singly_Linked_List<E>&& psll) {
+PSLL<E>& PSLL<E>::operator=(PSLL<E>&& psll) {
     
     if(this!=&psll) // prevent self-move
     {
@@ -166,7 +166,7 @@ Pooled_Singly_Linked_List<E>& Pooled_Singly_Linked_List<E>::operator=(Pooled_Sin
 //-----------------------------------------------------------------------------------------------------------------
 
 template <typename E>
-void Pooled_Singly_Linked_List<E>::insert( E element, size_t position ) {
+void PSLL<E>::insert( E element, size_t position ) {
     Node* temp = head_active;
     for(int i = 0; i < (position - 1); i++)
         temp = temp->next;
@@ -174,7 +174,7 @@ void Pooled_Singly_Linked_List<E>::insert( E element, size_t position ) {
 };
 
 template <typename E>
-void Pooled_Singly_Linked_List<E>::push_back( E element ) {
+void PSLL<E>::push_back( E element ) {
     if(is_empty())  {
         head_active = new_node(nullptr, element);
     }
@@ -190,12 +190,12 @@ void Pooled_Singly_Linked_List<E>::push_back( E element ) {
 };
 
 template <typename E>
-void Pooled_Singly_Linked_List<E>::push_front( E element ) {
+void PSLL<E>::push_front( E element ) {
     head_active = new_node(head_active, element);
 };
 
 template <typename E>
-void Pooled_Singly_Linked_List<E>::replace( E element, size_t position ) {
+void PSLL<E>::replace( E element, size_t position ) {
     Node* temp = head_active;
     for(int i = 0; i < (position - 1); i++)
         temp = temp->next;
@@ -208,9 +208,9 @@ void Pooled_Singly_Linked_List<E>::replace( E element, size_t position ) {
 
 
 template <typename E>
-E Pooled_Singly_Linked_List<E>::pop_back() {
+E PSLL<E>::pop_back() {
     if( is_empty())
-        throw std::runtime_error( "Pooled_Singly_Linked_List<E>::pop_back(): empty list" );
+        throw std::runtime_error( "PSLL<E>::pop_back(): empty list" );
     
     Node* temp = head_active;
     Node* further = nullptr;
@@ -237,9 +237,9 @@ E Pooled_Singly_Linked_List<E>::pop_back() {
 };
 
 template <typename E>
-E Pooled_Singly_Linked_List<E>::pop_front() {
+E PSLL<E>::pop_front() {
     if( is_empty())
-        throw std::runtime_error( "Pooled_Singly_Linked_List<E>::pop_front(): empty list" );
+        throw std::runtime_error( "PSLL<E>::pop_front(): empty list" );
     
     Node* temp = head_active;
     head_active = temp->next;
@@ -251,7 +251,7 @@ E Pooled_Singly_Linked_List<E>::pop_front() {
 };
 
 template <typename E>
-E Pooled_Singly_Linked_List<E>::item_at( size_t position ) {
+E PSLL<E>::item_at( size_t position ) {
     Node* temp = head_active;
     for(int i = 0; i < position; i++)
         temp = temp->next;
@@ -259,9 +259,9 @@ E Pooled_Singly_Linked_List<E>::item_at( size_t position ) {
 };
 
 template <typename E>
-E Pooled_Singly_Linked_List<E>::peek_back() {
+E PSLL<E>::peek_back() {
     if( is_empty())
-        throw std::runtime_error( "Pooled_Singly_Linked_List<E>::peek_back(): empty list" );
+        throw std::runtime_error( "PSLL<E>::peek_back(): empty list" );
 
     Node* temp = head_active;
     Node* val = nullptr;
@@ -273,15 +273,15 @@ E Pooled_Singly_Linked_List<E>::peek_back() {
 };
 
 template <typename E>
-E Pooled_Singly_Linked_List<E>::peek_front() {
+E PSLL<E>::peek_front() {
     if( is_empty())
-        throw std::runtime_error( "Pooled_Singly_Linked_List<E>::peek_front(): empty list" );
+        throw std::runtime_error( "PSLL<E>::peek_front(): empty list" );
 
     return head_active->data;
 };
 
 template <typename E>
-void Pooled_Singly_Linked_List<E>::remove( size_t position ) {
+void PSLL<E>::remove( size_t position ) {
     Node* temp = head_active;
     for(int i = 0; i < (position - 1); i++)
         temp = temp->next;
@@ -292,17 +292,17 @@ void Pooled_Singly_Linked_List<E>::remove( size_t position ) {
 };
 
 template <typename E>
-bool Pooled_Singly_Linked_List<E>::is_empty() {
+bool PSLL<E>::is_empty() {
     return !head_active;
 };
 
 template <typename E>
-bool Pooled_Singly_Linked_List<E>::is_full() {
+bool PSLL<E>::is_full() {
     return false;
 };
 
 template <typename E>
-bool Pooled_Singly_Linked_List<E>::contains( E element, bool (*equals_function)(E,E)) {
+bool PSLL<E>::contains( E element, bool (*equals_function)(E,E)) {
     Node* temp = head_active;
     while(temp) {
         if(equals_function(temp->data, element)) return true;
@@ -313,7 +313,7 @@ bool Pooled_Singly_Linked_List<E>::contains( E element, bool (*equals_function)(
 
 
 template <typename E>
-size_t Pooled_Singly_Linked_List<E>::length() {
+size_t PSLL<E>::length() {
     Node* temp = head_active;
     size_t counter = 0;
     while(temp) {
@@ -324,7 +324,7 @@ size_t Pooled_Singly_Linked_List<E>::length() {
 };
 
 template <typename E>
-void Pooled_Singly_Linked_List<E>::clear() {
+void PSLL<E>::clear() {
     Node* temp = head_active;
     while(head_active) {
         temp = head_active;
@@ -335,7 +335,7 @@ void Pooled_Singly_Linked_List<E>::clear() {
 };
 
 template <typename E>
-void Pooled_Singly_Linked_List<E>::print( std::ostream stream ) {
+void PSLL<E>::print( std::ostream stream ) {
     /*Node* temp = head_active;
     
     if(!temp) {
@@ -352,8 +352,8 @@ void Pooled_Singly_Linked_List<E>::print( std::ostream stream ) {
 };
 
 template <typename E>
-E* Pooled_Singly_Linked_List<E>::contents() {
-    size_t length = Pooled_Singly_Linked_List<E>::length();
+E* PSLL<E>::contents() {
+    size_t length = PSLL<E>::length();
     E* array = new E[length];
     Node* temp = head_active;
     for(int i = 0; i < length; i++){
@@ -366,7 +366,7 @@ E* Pooled_Singly_Linked_List<E>::contents() {
 //Private functions
 
 template <typename E>
-typename Pooled_Singly_Linked_List<E>::Node* Pooled_Singly_Linked_List<E>::new_node(Node * n, E d) {
+typename PSLL<E>::Node* PSLL<E>::new_node(Node * n, E d) {
     if(head_pool) {
         Node * temp = head_pool;
         head_pool = head_pool->next;
@@ -381,7 +381,7 @@ typename Pooled_Singly_Linked_List<E>::Node* Pooled_Singly_Linked_List<E>::new_n
 };
 
 template <typename E>
-void Pooled_Singly_Linked_List<E>::delete_node(Node * n) {
+void PSLL<E>::delete_node(Node * n) {
     list_size--;
 
     if(pool_size < 50) {

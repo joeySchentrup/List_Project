@@ -1,5 +1,5 @@
-#ifndef CIRCULAR_BUFFER_LIST_H
-#define CIRCULAR_BUFFER_LIST_H
+#ifndef CBL_H
+#define CBL_H
 
 #include "List.h"
 #include <iostream>
@@ -8,14 +8,14 @@
 namespace cop3530 {
 
 template < typename E >
-class Circular_Buffer_List : public List<E> {
+class CBL : public List<E> {
 public:
-    Circular_Buffer_List(size_t size);
-    ~Circular_Buffer_List() override;
-    Circular_Buffer_List(Circular_Buffer_List<E>& cbal); //copy constructor
-    Circular_Buffer_List(Circular_Buffer_List<E>&& cbal); //move constructor
-    Circular_Buffer_List<E>& operator=(Circular_Buffer_List<E>& cbal); // copy assignment operator
-    Circular_Buffer_List<E>& operator=(Circular_Buffer_List<E>&& cbal); // move assignment
+    CBL(size_t size);
+    ~CBL() override;
+    CBL(CBL<E>& cbal); //copy constructor
+    CBL(CBL<E>&& cbal); //move constructor
+    CBL<E>& operator=(CBL<E>& cbal); // copy assignment operator
+    CBL<E>& operator=(CBL<E>&& cbal); // move assignment
 
     void insert( E element, size_t position ) override;
     void push_back( E element ) override;
@@ -44,36 +44,39 @@ private:
     size_t length_of_array;
     size_t head;
     size_t tail;
+    size_t start_capacity;
     
     size_t next_index(size_t index);
     size_t previous_index(size_t index);
     size_t array_position(size_t position);
+    void resize_check();
 };
 
 //Public functions
 
 template <typename E>
-Circular_Buffer_List<E>::Circular_Buffer_List(size_t size = 50) {
+CBL<E>::CBL(size_t size = 50) {
     if(size < 2)
         throw std::runtime_error( "CBAL:In constructor: size needs to be at least 2." );
     
     array = new E[size];
     tail = 0;
     head = 0;
-    length_of_array = size;
+    start_capacity = length_of_array = size;
 };
 
 template <typename E>
-Circular_Buffer_List<E>::~Circular_Buffer_List() {
+CBL<E>::~CBL() {
     delete array;
 };
 
 //copy constructor
 template <typename E>
-Circular_Buffer_List<E>::Circular_Buffer_List(Circular_Buffer_List<E>& cbal) { 
+CBL<E>::CBL(CBL<E>& cbal) { 
     tail = cbal.tail;
     head = cbal.head;
     length_of_array = cbal.length_of_array;
+    start_capacity = cbal.start_capacity;
     array = new E[length_of_array];
     for(int i = 0; i < length_of_array; ++i )
         this.array[i] = cbal.array[i];
@@ -81,9 +84,10 @@ Circular_Buffer_List<E>::Circular_Buffer_List(Circular_Buffer_List<E>& cbal) {
 
 //move constructor
 template <typename E>
-Circular_Buffer_List<E>::Circular_Buffer_List(Circular_Buffer_List<E>&& cbal) {
+CBL<E>::CBL(CBL<E>&& cbal) {
     tail = cbal.tail;
     head = cbal.head;
+    start_capacity = cbal.start_capacity;
     length_of_array = cbal.length_of_array;
     array = cbal.array;
     cbal.head = nullptr;
@@ -91,11 +95,12 @@ Circular_Buffer_List<E>::Circular_Buffer_List(Circular_Buffer_List<E>&& cbal) {
 
 // copy assignment operator
 template <typename E>
-Circular_Buffer_List<E>& Circular_Buffer_List<E>::operator=(Circular_Buffer_List<E>& cbal) {
+CBL<E>& CBL<E>::operator=(CBL<E>& cbal) {
     delete array;
 
     tail = cbal.tail;
     head = cbal.head;
+    start_capacity = cbal.start_capacity;
     length_of_array = cbal.length_of_array;
     for(int i = 0; i < length_of_array; ++i )
         this.array[i] = cbal.array[i];
@@ -105,13 +110,14 @@ Circular_Buffer_List<E>& Circular_Buffer_List<E>::operator=(Circular_Buffer_List
 
 // move assignment
 template <typename E>
-Circular_Buffer_List<E>& Circular_Buffer_List<E>::operator=(Circular_Buffer_List<E>&& cbal) {
+CBL<E>& CBL<E>::operator=(CBL<E>&& cbal) {
     
     if(this!=&cbal) // prevent self-move
     {
         delete this.array;
         tail = cbal.tail;
         head = cbal.head;
+        start_capacity = cbal.start_capacity;
         length_of_array = cbal.length_of_array;
         this.array = cbal.array;
         cbal.array = nullptr;
@@ -120,15 +126,15 @@ Circular_Buffer_List<E>& Circular_Buffer_List<E>::operator=(Circular_Buffer_List
 };
 
 template <typename E>
-void Circular_Buffer_List<E>::insert( E element, size_t position ) {
-
+void CBL<E>::insert( E element, size_t position ) {
     if(is_empty())
         throw std::runtime_error( "CBAL:In insert(): list is empty." );
     if(position >= length() || position < 0)
         throw std::runtime_error( "CBAL:In insert(): invalid position." );
     
+    resize_check();
     position = array_position(position);
-    for(int i = tail; i !=  position ; i = previous_index(i)) 
+    for(int i = tail; i !=  previous_index(position) ; i = previous_index(i)) 
         array[next_index(i)] = array[i];
     
     tail = next_index(tail);
@@ -136,19 +142,21 @@ void Circular_Buffer_List<E>::insert( E element, size_t position ) {
 };
 
 template <typename E>
-void Circular_Buffer_List<E>::push_back( E element ) {
+void CBL<E>::push_back( E element ) {
+    resize_check();
     array[tail] = element;
     tail = next_index(tail);
 };
 
 template <typename E>
-void Circular_Buffer_List<E>::push_front( E element ) {    
-    array[head] = element;
+void CBL<E>::push_front( E element ) {
+    resize_check();  
     head = previous_index(head);
+    array[head] = element;
 };
 
 template <typename E>
-void Circular_Buffer_List<E>::replace( E element, size_t position ) {
+void CBL<E>::replace( E element, size_t position ) {
     if(is_empty())
         throw std::runtime_error( "CBAL:In replace(): list is empty." );
     if(position >= length() || position < 0)
@@ -160,26 +168,28 @@ void Circular_Buffer_List<E>::replace( E element, size_t position ) {
 
 
 template <typename E>
-E Circular_Buffer_List<E>::pop_back() {
+E CBL<E>::pop_back() {
     if(is_empty())
         throw std::runtime_error( "CBAL:In pop_back(): list is empty." );
     
     tail = previous_index(tail);
+    resize_check();
     return array[tail];
 };
 
 template <typename E>
-E Circular_Buffer_List<E>::pop_front() {
+E CBL<E>::pop_front() {
     if(is_empty())
         throw std::runtime_error( "CBAL:In pop_front(): list is empty." );
 
-    head = previous_index(head);
-    E data = array[head];  
+    E data = array[head]; 
+    head = next_index(head); 
+    resize_check();
     return data;
 };
 
 template <typename E>
-E Circular_Buffer_List<E>::item_at(size_t position) {
+E CBL<E>::item_at(size_t position) {
     if(is_empty()) 
         throw std::runtime_error( "CBAL:In item_at(): list is empty." );
     if(position >= length()  || position < 0) 
@@ -190,21 +200,21 @@ E Circular_Buffer_List<E>::item_at(size_t position) {
 };
 
 template <typename E>
-E Circular_Buffer_List<E>::peek_back() {
+E CBL<E>::peek_back() {
     if(is_empty())
         throw std::runtime_error( "CBAL:In peek_back(): list is empty." );
     return array[previous_index(tail)];
 };
 
 template <typename E>
-E Circular_Buffer_List<E>::peek_front() {
+E CBL<E>::peek_front() {
     if(is_empty())
         throw std::runtime_error( "CBAL:In peek_front(): list is empty." );
-    return array[next_index(head)];
+    return array[head];
 };
 
 template <typename E>
-void Circular_Buffer_List<E>::remove( size_t position ) {
+void CBL<E>::remove( size_t position ) {
     if(is_empty())
         throw std::runtime_error( "CBAL:In remove(): list is empty." );
     if(position >= length()  || position < 0)
@@ -216,20 +226,21 @@ void Circular_Buffer_List<E>::remove( size_t position ) {
         array[i] = array[next_index(i)];
     
     tail = previous_index(tail);
+    resize_check();
 };
 
 template <typename E>
-bool Circular_Buffer_List<E>::is_empty() {
+bool CBL<E>::is_empty() {
     return tail == head;
 };
 
 template <typename E>
-bool Circular_Buffer_List<E>::is_full() {
+bool CBL<E>::is_full() {
     return false;
 };
 
 template <typename E>
-bool Circular_Buffer_List<E>::contains( E element, bool (*equals_function)(E,E)) {
+bool CBL<E>::contains( E element, bool (*equals_function)(E,E)) {
     E temp;
     for(int i = head; i != tail; i = next_index(i)) {
         if(equals_function(array[i], element)) return true;
@@ -239,8 +250,8 @@ bool Circular_Buffer_List<E>::contains( E element, bool (*equals_function)(E,E))
 
 
 template <typename E>
-size_t Circular_Buffer_List<E>::length() {
-    if(is_empty()) 
+size_t CBL<E>::length() {
+    if(is_empty())
         return 0;
     else if(head < tail) 
         return tail-head;
@@ -249,14 +260,14 @@ size_t Circular_Buffer_List<E>::length() {
 };
 
 template <typename E>
-void Circular_Buffer_List<E>::clear() {
+void CBL<E>::clear() {
     tail = 0;
     head = 1;
     head = previous_index(head);
 };
 
 template <typename E>
-void Circular_Buffer_List<E>::print( std::ostream stream ) {
+void CBL<E>::print( std::ostream stream ) {
     /*Node* temp = head_active;
     
     if(!temp) {
@@ -273,12 +284,12 @@ void Circular_Buffer_List<E>::print( std::ostream stream ) {
 };
 
 template <typename E>
-E* Circular_Buffer_List<E>::contents() {
+E* CBL<E>::contents() {
     E* new_array = new E[length()];
     
     int counter = 0;
     for(int i = head; i != tail; i = next_index(i)) {
-        new_array[counter++] = item_at(i);
+        new_array[counter++] = array[i];
     }
 
     return new_array;
@@ -287,39 +298,15 @@ E* Circular_Buffer_List<E>::contents() {
 //Private functions
 
 template <typename E>
-size_t Circular_Buffer_List<E>::next_index(size_t index) {
-
-    if(length() + 1 >= length_of_array) {
-        size_t new_length = length_of_array + (3)*(length_of_array/4);
-        E* new_array = new E[new_length];
-        
-        for(int i = 0; i < length_of_array; i++)
-            new_array[i] = array[i];
-
-        array = new_array;
-        length_of_array = new_length;
-    }
-
+size_t CBL<E>::next_index(size_t index) {
     if(++index == length_of_array) 
         return 0;
     else
-        return ++index;
+        return index;
 };
 
 template <typename E>
-size_t Circular_Buffer_List<E>::previous_index(size_t index) {
-    
-    if(tail > length_of_array/2 && tail > 101) {
-        size_t new_length = length_of_array - length_of_array/4;
-        E* new_array = new E[new_length];
-        
-        for(int i = 0; i < new_length; i++)
-            new_array[i] = array[i];
-
-        array = new_array;
-        length_of_array = new_length;
-    }
-
+size_t CBL<E>::previous_index(size_t index) {
     if(index == 0) 
         return length_of_array - 1;
     else
@@ -327,13 +314,62 @@ size_t Circular_Buffer_List<E>::previous_index(size_t index) {
 };
 
 template <typename E>
-size_t Circular_Buffer_List<E>::array_position(size_t position) {
+size_t CBL<E>::array_position(size_t position) {
     position = head + position;
     if(position >= length_of_array) 
         return head - length_of_array;
     else 
         return position;
 };
+
+template <typename E>
+void CBL<E>::resize_check() {
+    
+    if(length() < length_of_array/2 && length() > start_capacity*2) {
+        size_t lost_length = length_of_array/4;
+        E* new_array = new E[length_of_array - lost_length];
+        
+        if(head < tail) {
+            if(tail < length_of_array - lost_length - 1) {
+                for(int i = head; i != tail; i++)
+                    new_array[i] = array[i];
+            } else {
+                for(int i = head; i != tail; i++)
+                    new_array[i - lost_length] = array[i];
+            }
+        }
+        else {
+            for(int i = 0; i < tail; i++)
+                new_array[i] = array[i];
+            for(int i = head; i < length_of_array; i++)
+                new_array[i - lost_length] = array[i];
+            head -= lost_length;
+        }
+
+        array = new_array;
+        length_of_array = length_of_array - lost_length;
+
+    } else if(length() + 1 == length_of_array) {        
+        size_t added_length = (length_of_array/2);
+        E* new_array = new E[length_of_array + added_length];
+        
+        if(head < tail) {
+            for(int i = head; i < tail; i++)
+                new_array[i] = array[i];
+        }
+        else {
+            for(int i = 0; i < tail; i++)
+                new_array[i] = array[i];
+            for(int i = head; i < length_of_array; i++)
+                new_array[i + added_length] = array[i];
+            head += added_length;
+        }
+
+        array = new_array;
+        length_of_array = added_length + length_of_array;
+    }
+};
+
 
 }
 
