@@ -48,7 +48,6 @@ private:
     };
 
     Node* head_active;
-    int list_size;
 
     Node* head_pool;
     int pool_size;
@@ -75,7 +74,6 @@ PSLL<E>::PSLL() {
     head_active = nullptr; 
     head_pool = nullptr;
     pool_size = 0;
-    list_size = 0;
 };
 
 template <typename E>
@@ -100,20 +98,23 @@ template <typename E>
 PSLL<E>::PSLL(PSLL<E>& psll) { 
     head_active = nullptr;
     head_pool = nullptr;
+    pool_size = 0;
     size_t size = psll.length();
     //TODO: replace with iterator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     for(int i = 0; i < size; ++i )
-        this.push_back(psll.item_at(i));
+        this->push_back(psll.item_at(i));
 };
 
 //move constructor
 template <typename E>
 PSLL<E>::PSLL(PSLL<E>&& psll) {
-    head_active = psll.head;
-    psll.head = nullptr;
-    Node* temp;
+    head_active = psll.head_active;
+    head_pool = nullptr;
+    pool_size = 0;
+    psll.head_active = nullptr;
+
     while(psll.head_pool) {
-        temp = psll.head_pool;
+        Node* temp = psll.head_pool;
         psll.head_pool = psll.head_pool->next;
         delete temp;
     }
@@ -129,10 +130,14 @@ PSLL<E>& PSLL<E>::operator=(PSLL<E>& psll) {
         delete temp;
     }
 
+    head_active = nullptr;
+    head_pool = nullptr;
+    pool_size = 0;
+
     //TODO: replace with iterator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     size_t size = psll.length();
     for(int i = 0; i < size; ++i )
-        this.push_back(psll.item_at(i));
+        this->push_back(psll.item_at(i));
 
     
     return *this;
@@ -150,15 +155,15 @@ PSLL<E>& PSLL<E>::operator=(PSLL<E>&& psll) {
             head_active = head_active->next;
             delete temp;
         }
-
+        
         while(psll.head_pool) {
             temp = psll.head_pool;
             psll.head_pool = psll.head_pool->next;
             delete temp;
         }
 
-        head_active = psll.head;
-        psll.head = nullptr;
+        head_active = psll.head_active;
+        psll.head_active = nullptr;
     }
     return *this;
 };
@@ -382,7 +387,6 @@ typename PSLL<E>::Node* PSLL<E>::new_node(Node * n, E d) {
 
 template <typename E>
 void PSLL<E>::delete_node(Node * n) {
-    list_size--;
 
     if(pool_size < 50) {
         ++pool_size;

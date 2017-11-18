@@ -79,7 +79,7 @@ CBL<E>::CBL(CBL<E>& cbal) {
     start_capacity = cbal.start_capacity;
     array = new E[length_of_array];
     for(int i = 0; i < length_of_array; ++i )
-        this.array[i] = cbal.array[i];
+        this->array[i] = cbal.array[i];
 };
 
 //move constructor
@@ -90,20 +90,25 @@ CBL<E>::CBL(CBL<E>&& cbal) {
     start_capacity = cbal.start_capacity;
     length_of_array = cbal.length_of_array;
     array = cbal.array;
-    cbal.head = nullptr;
+
+    cbal.array = nullptr;
 };
 
 // copy assignment operator
 template <typename E>
 CBL<E>& CBL<E>::operator=(CBL<E>& cbal) {
-    delete array;
 
     tail = cbal.tail;
     head = cbal.head;
     start_capacity = cbal.start_capacity;
     length_of_array = cbal.length_of_array;
+
+    E* temp = this->array;
+    this->array = new E[length_of_array];
+    delete temp;
+
     for(int i = 0; i < length_of_array; ++i )
-        this.array[i] = cbal.array[i];
+        this->array[i] = cbal.array[i];
     
     return *this;
 };
@@ -114,12 +119,13 @@ CBL<E>& CBL<E>::operator=(CBL<E>&& cbal) {
     
     if(this!=&cbal) // prevent self-move
     {
-        delete this.array;
         tail = cbal.tail;
         head = cbal.head;
         start_capacity = cbal.start_capacity;
         length_of_array = cbal.length_of_array;
-        this.array = cbal.array;
+        E* temp = this->array;
+        this->array = cbal.array;
+        delete temp;
         cbal.array = nullptr;
     }
     return *this;
@@ -172,8 +178,8 @@ E CBL<E>::pop_back() {
     if(is_empty())
         throw std::runtime_error( "CBAL:In pop_back(): list is empty." );
     
-    tail = previous_index(tail);
     resize_check();
+    tail = previous_index(tail);
     return array[tail];
 };
 
@@ -225,8 +231,8 @@ void CBL<E>::remove( size_t position ) {
     for(int i = position; i != tail; i = next_index(i)) 
         array[i] = array[next_index(i)];
     
-    tail = previous_index(tail);
     resize_check();
+    tail = previous_index(tail);
 };
 
 template <typename E>
@@ -262,8 +268,8 @@ size_t CBL<E>::length() {
 template <typename E>
 void CBL<E>::clear() {
     tail = 0;
-    head = 1;
-    head = previous_index(head);
+    head = 0;
+    resize_check();
 };
 
 template <typename E>
@@ -330,18 +336,17 @@ void CBL<E>::resize_check() {
         E* new_array = new E[length_of_array - lost_length];
         
         if(head < tail) {
-            if(tail < length_of_array - lost_length - 1) {
+            if(tail < length_of_array - lost_length) {
                 for(int i = head; i != tail; i++)
                     new_array[i] = array[i];
             } else {
                 for(int i = head; i != tail; i++)
                     new_array[i - lost_length] = array[i];
             }
-        }
-        else {
-            for(int i = 0; i < tail; i++)
+        } else {
+            for(int i = 0; i != tail; i++)
                 new_array[i] = array[i];
-            for(int i = head; i < length_of_array; i++)
+            for(int i = head; i != length_of_array; i++)
                 new_array[i - lost_length] = array[i];
             head -= lost_length;
         }

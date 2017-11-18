@@ -103,11 +103,11 @@ public:
         //equivalence ops--------------------------------------------------
 
         bool operator==( self_type const& iter ) const override {
-            return iter.here == this.here;
+            return iter.here == this->here;
         };
 
         bool operator!=( self_type const& iter ) const override {
-            return iter.here != this.here;
+            return iter.here != this->here;
         };
 
         //-------------------------------------------------------------------
@@ -163,7 +163,7 @@ SSLL<E>::SSLL(SSLL<E>& ssl) {
     size_t size = ssl.length();
     //TODO: replace with iterator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     for(int i = 0; i < size; ++i )
-        this.push_back(ssl.item_at(i));
+        this->push_back(ssl.item_at(i));
 };
 
 //move constructor
@@ -186,7 +186,7 @@ SSLL<E>& SSLL<E>::operator=(SSLL<E>& ssl) {
     //TODO: replace with iterator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     size_t size = ssl.length();
     for(int i = 0; i < size; ++i )
-        this.push_back(ssl.item_at(i));
+        this->push_back(ssl.item_at(i));
 
     
     return *this;

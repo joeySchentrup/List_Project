@@ -25,6 +25,99 @@ TEST_CASE("SSLL: Push, Peek, and Pop test on small list") {
     }
 }
 
+TEST_CASE("SSLL: Test Exception trowing on empty list") {
+    SSLL<int>* list = new SSLL<int>();
+    for(int i = 0; i < 10; i++)
+        list->push_front(i);
+
+    for(int i = 9; i != -1; i--)
+        list->pop_front();
+    bool passed = false;
+    
+    try {
+        list->pop_front();
+    } catch (...) {
+        passed = true;
+    }
+    REQUIRE(passed);
+    
+    passed = false;
+    try {
+        list->pop_back();
+    } catch (...) {
+        passed = true;
+    }
+    REQUIRE(passed);
+
+    passed = false;
+    try {
+        list->peek_back();
+    } catch (...) {
+        passed = true;
+    }
+    REQUIRE(passed);
+
+    passed = false;
+    try {
+        list->peek_front();
+    } catch (...) {
+        passed = true;
+    }
+    REQUIRE(passed);
+}
+
+TEST_CASE("SSLL: Test Copy Constructor") {
+    SSLL<int>* list = new SSLL<int>();
+    for(int i = 0; i < 101; i++)
+        list->push_back(i);
+
+    SSLL<int>* list_copy = new SSLL<int>(*list);
+    for(int i = 100; i != -1; i--) {
+        REQUIRE(list_copy->peek_back() == i);
+        REQUIRE(list_copy->pop_back() == i);
+    }
+
+}
+
+TEST_CASE("SSLL: Test Move Constructor") { 
+    SSLL<int>* list = new SSLL<int>();
+    for(int i = 0; i < 101; i++)
+        list->push_back(i);
+
+    SSLL<int> list_copy = std::move(*list);
+    for(int i = 100; i != -1; i--) {
+        REQUIRE(list_copy.peek_back() == i);
+        REQUIRE(list_copy.pop_back() == i);
+    }
+
+}
+
+TEST_CASE("SSLL: Test Copy Assignment operator") { 
+    SSLL<int>* list = new SSLL<int>();
+    for(int i = 0; i < 101; i++)
+        list->push_back(i);
+
+    SSLL<int> list_copy = SSLL<int>();
+    list_copy = *list;
+    for(int i = 100; i != -1; i--) {
+        REQUIRE(list_copy.peek_back() == i);
+        REQUIRE(list_copy.pop_back() == i);
+    }
+}
+
+TEST_CASE("SSLL: Test Move Assignment operator") { 
+    SSLL<int>* list = new SSLL<int>();
+    for(int i = 0; i < 101; i++)
+        list->push_back(i);
+
+    SSLL<int> list_copy = SSLL<int>();
+    list_copy = std::move(*list);
+    for(int i = 100; i != -1; i--) {
+        REQUIRE(list_copy.peek_back() == i);
+        REQUIRE(list_copy.pop_back() == i);
+    }
+}
+
 //Ten items in, test is full, is empty, length, clear, contents
 TEST_CASE("SSLL: Tests is full") {
     SSLL<int>* list = new SSLL<int>();
@@ -124,6 +217,18 @@ TEST_CASE("SSLL: Test insert") {
     REQUIRE(11 == list->item_at(5));
     REQUIRE(5 == list->item_at(4));
     REQUIRE(4 == list->item_at(6));
+}
+
+TEST_CASE("SSLL: Test insert on large set") {
+    
+    SSLL<int>* list = new SSLL<int>();
+    for(int i = 0; i < 500; i++)
+        list->push_back(i);
+
+    list->insert(11, 205);
+    REQUIRE(11 == list->item_at(205));
+    REQUIRE(204 == list->item_at(204));
+    REQUIRE(205 == list->item_at(206));
 }
 
 //x items in, x items out, same as test 1 but with a bunch of stuff

@@ -16,14 +16,17 @@ using namespace cop3530;
 template <typename T>
 class Debugger {
 public:
-    static void debug(List<T>* list) {
+    static std::string debug(List<T>* list) {
         int l = list->length();
         T* a = list->contents();
+        std::string output = "Array: ";
 
-        for(int i = 0; i < l; i++) 
-            std::cout << a[i] << " ";
+        for(int i = 0; i < l; i++) {
+            output.append( std::to_string(a[i]));
+            output.append(" ");
+        }
     
-       std::cout << std::endl;
+       return output;
     }
 };
 

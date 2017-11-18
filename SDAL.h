@@ -71,7 +71,7 @@ SDAL<E>::SDAL(SDAL<E>& sdal) {
     length_of_array = tail;
     array = new E[tail];
     for(int i = 0; i < tail; ++i )
-        this.array[i] = sdal.array[i];
+        this->array[i] = sdal.array[i];
 };
 
 //move constructor
@@ -80,7 +80,7 @@ SDAL<E>::SDAL(SDAL<E>&& sdal) {
     tail = sdal.tail;
     length_of_array = sdal.length_of_array;
     array = sdal.array;
-    sdal.head = nullptr;
+    sdal.array = nullptr;
 };
 
 // copy assignment operator
@@ -92,7 +92,7 @@ SDAL<E>& SDAL<E>::operator=(SDAL<E>& sdal) {
     length_of_array = sdal.length_of_array;
     array = new E[length_of_array];
     for(int i = 0; i < tail; ++i )
-        this.array[i] = sdal.array[i];
+        this->array[i] = sdal.array[i];
     
     return *this;
 };
@@ -103,10 +103,10 @@ SDAL<E>& SDAL<E>::operator=(SDAL<E>&& sdal) {
     
     if(this!=&sdal) // prevent self-move
     {
-        delete this.array;
+        delete this->array;
         tail = sdal.tail;
         length_of_array = sdal.length_of_array;
-        this.array = sdal.array;
+        this->array = sdal.array;
         sdal.array = nullptr;
     }
     return *this;

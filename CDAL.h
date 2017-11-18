@@ -94,33 +94,36 @@ CDAL<E>::~CDAL() {
 template <typename E>
 CDAL<E>::CDAL(CDAL<E>& cdal) { 
     head = nullptr;
+    tail = 0;
     size_t size = cdal.length();
     //TODO: replace with iterator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     for(int i = 0; i < size; ++i )
-        this.push_back(cdal.item_at(i));
+        this->push_back(cdal.item_at(i));
 };
 
 //move constructor
 template <typename E>
 CDAL<E>::CDAL(CDAL<E>&& cdal) {
     head = cdal.head;
+    tail = cdal.tail;
     cdal.head = nullptr;
 };
 
 // copy assignment operator
 template <typename E>
 CDAL<E>& CDAL<E>::operator=(CDAL<E>& cdal) {
-    Node* temp;
+    
     while(head) {
-        temp = head;
+        Node* temp = head;
         head = head->next;
         delete temp;
     }
 
+    tail = 0;
     //TODO: replace with iterator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     size_t size = cdal.length();
     for(int i = 0; i < size; ++i )
-        this.push_back(cdal.item_at(i));
+        this->push_back(cdal.item_at(i));
 
     
     return *this;
@@ -138,7 +141,7 @@ CDAL<E>& CDAL<E>::operator=(CDAL<E>&& cdal) {
             head = head->next;
             delete temp;
         }
-
+        tail = cdal.tail;
         head = cdal.head;
         cdal.head = nullptr;
     }
@@ -156,28 +159,22 @@ void CDAL<E>::insert( E element, size_t position ) {
         throw std::runtime_error( "CDAL:In insert(): invalid position" );
 
     Node* temp = head;
-    size_t node_counter = 0;
+    int counter = -1;
 
-    while((1 + node_counter)*ARRAY_SIZE <= position) {
-        ++node_counter;
+    while(++counter != tail/ARRAY_SIZE) 
         temp = temp->next;
-    }
 
     if((ARRAY_SIZE - 1) == tail%ARRAY_SIZE && !temp->next) { //if tail is pointing to the next node and a next node DNE.
         temp->next = new Node(nullptr, temp, element); //element is going in here but only as a place holder
-        temp = temp->next;
     }
 
-    for(int i = tail; i > (position - 1); i--) {
+    for(int i = tail; i != position; i--) {
         if(i%ARRAY_SIZE  == 0) {
             temp->data[i%ARRAY_SIZE] = temp->previous->data[(--i)%ARRAY_SIZE ];
             temp = temp->previous;
         }
         temp->data[i%ARRAY_SIZE] = temp->data[i%ARRAY_SIZE  - 1];
     }
-
-    if(temp != head)
-        throw std::runtime_error( "Expecting head to be temp. It was not." );
      
     temp->data[position%ARRAY_SIZE] = element;
 
@@ -198,7 +195,8 @@ void CDAL<E>::push_back( E element ) {
             temp = temp->next;
         
         if((ARRAY_SIZE - 1) == tail%ARRAY_SIZE && !temp->next) {
-            temp->next = new Node(nullptr, temp, element); 
+            temp->next = new Node(nullptr, temp, element);
+            temp->data[tail%ARRAY_SIZE] = element;             
         } else {
             temp->data[tail%ARRAY_SIZE] = element;
         }
@@ -229,9 +227,6 @@ void CDAL<E>::push_front( E element ) {
             }
             temp->data[i%ARRAY_SIZE] = temp->data[i%ARRAY_SIZE  - 1];
         }
-
-        //if(temp != head)
-        //  throw std::runtime_error( "Expecting head to be temp. It was not." );
         
         temp->data[0] = element;
     }
@@ -253,9 +248,6 @@ void CDAL<E>::replace( E element, size_t position ) {
         ++node_counter;
         temp = temp->next;
     }
-
-    if(temp != head)
-        throw std::runtime_error( "Expecting head to be temp. It was not." );
  
     temp->data[position%ARRAY_SIZE] = element;
 };
@@ -311,15 +303,10 @@ E CDAL<E>::item_at( size_t position ) {
         throw std::runtime_error( "CDAL:In insert(): invalid position" );
 
     Node* temp = head;
-    size_t node_counter = 0;
+    int counter = -1;
 
-    while((1 + node_counter)*ARRAY_SIZE <= position) {
-       ++node_counter;
-       temp = temp->next;
-    }
-
-    if(temp != head)
-        throw std::runtime_error( "Expecting head to be temp. It was not." );
+    while(++counter != position/ARRAY_SIZE) 
+        temp = temp->next;
 
     return temp->data[position%ARRAY_SIZE];
 };
@@ -376,8 +363,6 @@ void CDAL<E>::remove( size_t position ) {
         temp->next = nullptr;
     }
 
-    if(temp != head)
-        throw std::runtime_error( "Expecting head to be temp. It was not." );
 };
 
 template <typename E>
