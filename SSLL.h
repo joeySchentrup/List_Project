@@ -89,7 +89,7 @@ public:
         };
 
         self_type operator++(int) { // postincrement
-            self_type temp = this;
+            self_type temp = *this;
             here = here->next;
             return temp;
         };

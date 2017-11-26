@@ -83,7 +83,7 @@ public:
         };
 
         self_type operator++(int) { // postincrement
-            self_type temp = this;
+            self_type temp = *this;
             ++here;
             return temp;
         };
@@ -91,11 +91,11 @@ public:
         //equivalence ops--------------------------------------------------
 
         bool operator==( self_type const& iter ) const {
-            return iter.here == this->here && iter.tail == this->tail && iter.array == this->array;
+            return iter.here == this->here && iter.array == this->array;
         };
 
         bool operator!=( self_type const& iter ) const {
-            return iter.here != this->here || iter.tail != this->tail || iter.array != this->array;
+            return iter.here != this->here || iter.array != this->array;
         };
 
         //-------------------------------------------------------------------

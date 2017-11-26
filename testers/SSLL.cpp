@@ -254,7 +254,7 @@ TEST_CASE("SSLL: Push, Peek, and Pop on big data set") {
 
 
 //Test the for each iterator
-TEST_CASE("Tests the iterators using for each") {
+TEST_CASE("SSLL: Tests the iterators using for each") {
         
     SSLL<int>* list = new SSLL<int>();
     for(int i = 0; i < 1000; i++) {
@@ -267,7 +267,7 @@ TEST_CASE("Tests the iterators using for each") {
 }
     
 //Test the begin and end and ++ operators
-TEST_CASE("Tests the iterators using for each") {
+TEST_CASE("SSLL: Tests the iterators using begin and end and ++ operators") {
         
     SSLL<int>* list = new SSLL<int>();
     for(int i = 0; i < 1000; i++) {
@@ -276,13 +276,13 @@ TEST_CASE("Tests the iterators using for each") {
     
     int i = 999;
     
-    SSLL_Iter<*list,int> iter = list->begin();
-    SSLL_Iter<*list,int> end = list->end();
+    SSLL<int>::SSLL_Iter<SSLL<int>,int> iter = list->begin();
+    SSLL<int>::SSLL_Iter<SSLL<int>,int> end = list->end();
     
     for(; iter != end; iter++) 
         REQUIRE(*iter == i--);
 
-    int i = 999;
+    i = 999;
     for(; iter != end; ++iter) 
         REQUIRE(*iter == i--);
 }

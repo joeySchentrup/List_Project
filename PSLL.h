@@ -54,6 +54,95 @@ private:
 
     Node* new_node(Node * n, E d);
     void delete_node(Node * n);
+
+   /*All the functions in this iterator are defined in the iterator. I am unsure if there
+    is another way to get them further downt the file and out of the implamentation, but
+    this is the only way I found to get it to compile.*/
+public:
+    template < typename PSLLT, typename T >
+    class PSLL_Iter {
+    public:
+        using value_type = T;
+        using reference = T&;
+        using pointer = T*; 
+        using difference_type = std::ptrdiff_t;
+        using iterator_category = std::forward_iterator_tag;
+
+        using self_type = PSLL_Iter;
+        using self_reference = PSLL_Iter&;
+
+        // iterators over a non-const List
+        static self_type make_begin( PSLL<value_type>& s) {
+            PSLL_Iter i( s, s.head_active );
+            return i;
+        };
+
+        static self_type make_end( PSLL<value_type>& s) {            
+            PSLL_Iter i( s, nullptr );
+            return i;
+        };
+
+        //referencing ops-------------------------------------------------
+
+        reference operator*() const { return here->data; };
+        pointer operator->() const { return &(operator*()); };
+
+        //incramentors----------------------------------------------------
+
+        self_reference operator++() { // preincrement
+            here = here->next;
+            return *this;
+        };
+
+        self_type operator++(int) { // postincrement
+            self_type temp = *this;
+            here = here->next;
+            return temp;
+        };
+
+        //equivalence ops--------------------------------------------------
+
+        bool operator==( self_type const& iter ) const {
+            return iter.here == this->here;
+        };
+
+        bool operator!=( self_type const& iter ) const {
+            return iter.here != this->here;
+        };
+
+        //-------------------------------------------------------------------
+        
+    private:
+        PSLLT ssl;
+        Node* here;
+
+        PSLL_Iter( PSLLT &list, Node* start ) {
+            here = start;
+            ssl = list;
+        };
+    };
+
+public:
+    // type aliases for prettier code
+    using iterator = PSLL_Iter<PSLL, E>;
+    using const_iterator = PSLL_Iter<PSLL const, E const>;
+    
+    // methods to create appropriate iterators
+    iterator begin() { 
+        return iterator::make_begin(*this); 
+    };
+    iterator end() { 
+        return iterator::make_end(*this); 
+    };
+    
+    const_iterator begin() const { 
+        return const_iterator::make_begin(*this); 
+    };
+    const_iterator end() const {
+         return const_iterator::make_end(*this); 
+    };
+
+
 };
 
 //Public functions

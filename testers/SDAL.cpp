@@ -252,7 +252,7 @@ TEST_CASE("SDAL: Push, Peek, and Pop on big data set") {
 }
 
 //Test the for each iterator
-TEST_CASE("Tests the iterators using for each") {
+TEST_CASE("SDAL: Tests the iterators using for each") {
         
     SDAL<int>* list = new SDAL<int>();
     for(int i = 0; i < 1000; i++) {
@@ -265,7 +265,7 @@ TEST_CASE("Tests the iterators using for each") {
 }
     
 //Test the begin and end and ++ operators
-TEST_CASE("Tests the iterators using for each") {
+TEST_CASE("SDAL: Tests the iterators using begin and end and ++ operators") {
         
     SDAL<int>* list = new SDAL<int>();
     for(int i = 0; i < 1000; i++) {
@@ -274,13 +274,13 @@ TEST_CASE("Tests the iterators using for each") {
     
     int i = 999;
     
-    SDAL_Iter<*list,int> iter = list->begin();
-    SDAL_Iter<*list,int> end = list->end();
+    SDAL<int>::SDAL_Iter<SDAL<int>,int> iter = list->begin();
+    SDAL<int>::SDAL_Iter<SDAL<int>,int> end = list->end();
     
     for(; iter != end; iter++) 
         REQUIRE(*iter == i--);
 
-    int i = 999;
+    i = 999;
     for(; iter != end; ++iter) 
         REQUIRE(*iter == i--);
 }
