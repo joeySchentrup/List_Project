@@ -45,6 +45,94 @@ private:
     
     void  next_index();
     void  previous_index();
+
+public:
+    template < typename SDALT, typename T >
+    class SDAL_Iter {
+    public:
+        using value_type = T;
+        using reference = T&;
+        using pointer = T*; 
+        using difference_type = std::ptrdiff_t;
+        using iterator_category = std::forward_iterator_tag;
+
+        using self_type = SDAL_Iter;
+        using self_reference = SDAL_Iter&;
+
+        // iterators over a non-const List
+        static self_type make_begin( SDAL<value_type>& s) {
+            SDAL_Iter i( s, 0 );
+            return i;
+        };
+
+        static self_type make_end( SDAL<value_type>& s) {            
+            SDAL_Iter i( s, s.tail );
+            return i;
+        };
+
+        //referencing ops-------------------------------------------------
+
+        reference operator*() const { return array[here]; };
+        pointer operator->() const { return &(operator*()); };
+
+        //incramentors----------------------------------------------------
+
+        self_reference operator++() { // preincrement
+            ++here;
+            return *this;
+        };
+
+        self_type operator++(int) { // postincrement
+            self_type temp = this;
+            ++here;
+            return temp;
+        };
+
+        //equivalence ops--------------------------------------------------
+
+        bool operator==( self_type const& iter ) const {
+            return iter.here == this->here && iter.tail == this->tail && iter.array == this->array;
+        };
+
+        bool operator!=( self_type const& iter ) const {
+            return iter.here != this->here || iter.tail != this->tail || iter.array != this->array;
+        };
+
+        //-------------------------------------------------------------------
+        
+    private:
+        SDALT sdal;
+        size_t here;
+        T* array;
+
+        SDAL_Iter( SDALT &list, size_t start ) {
+            sdal = list;
+            here = start;
+            array = list.array; 
+        };
+    };
+
+public:
+    // type aliases for prettier code
+    using iterator = SDAL_Iter<SDAL, E>;
+    using const_iterator = SDAL_Iter<SDAL const, E const>;
+    
+    // methods to create appropriate iterators
+    iterator begin() { 
+        return iterator::make_begin(*this); 
+    };
+    iterator end() { 
+        return iterator::make_end(*this); 
+    };
+    
+    const_iterator begin() const { 
+        return const_iterator::make_begin(*this); 
+    };
+    const_iterator end() const {
+         return const_iterator::make_end(*this); 
+    };
+
+
 };
 
 //Public functions

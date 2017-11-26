@@ -48,13 +48,13 @@ private:
     };
     Node* head;
 
-/*
-    All the functions in this iterator are defined in the iterator. I am unsure if there
+
+    /*All the functions in this iterator are defined in the iterator. I am unsure if there
     is another way to get them further downt the file and out of the implamentation, but
-    this is the only way I found to get it to compile.
+    this is the only way I found to get it to compile.*/
 public:
-    template < typename T >
-    class SSL_Iter : public List<T>::Iter {
+    template < typename SSLLT, typename T >
+    class SSLL_Iter {
     public:
         using value_type = T;
         using reference = T&;
@@ -62,70 +62,81 @@ public:
         using difference_type = std::ptrdiff_t;
         using iterator_category = std::forward_iterator_tag;
 
-        using self_type = typename List<T>::Iter;
-        using self_reference = typename List<T>::Iter&;
+        using self_type = SSLL_Iter;
+        using self_reference = SSLL_Iter&;
 
         // iterators over a non-const List
-        static SSL_Iter make_begin( SSLL<value_type>& s) {
-            SSL_Iter<T> i( s, s.head );
+        static self_type make_begin( SSLL<value_type>& s) {
+            SSLL_Iter i( s, s.head );
             return i;
         };
 
-        static SSL_Iter make_end( SSLL<value_type>& s) {
-            //------------------need to do------------------------
-            SSL_Iter<T> i( s, s.head );
+        static self_type make_end( SSLL<value_type>& s) {            
+            SSLL_Iter i( s, nullptr );
             return i;
-        };
-
-        SSL_Iter( SSLL<value_type>& list, Node* start ) {
-            here = start;
-            ssl = list;
         };
 
         //referencing ops-------------------------------------------------
 
-        reference operator*() const override { return here->data; };
-        pointer operator->() const override { return &(operator*()); };
+        reference operator*() const { return here->data; };
+        pointer operator->() const { return &(operator*()); };
 
         //incramentors----------------------------------------------------
 
-        self_reference operator++() override { // preincrement
+        self_reference operator++() { // preincrement
             here = here->next;
-            return this;
+            return *this;
         };
 
-        /*self_type operator++(int) override { // postincrement
-            SSL_Iter temp = this;
+        self_type operator++(int) { // postincrement
+            self_type temp = this;
             here = here->next;
             return temp;
         };
 
         //equivalence ops--------------------------------------------------
 
-        bool operator==( self_type const& iter ) const override {
+        bool operator==( self_type const& iter ) const {
             return iter.here == this->here;
         };
 
-        bool operator!=( self_type const& iter ) const override {
+        bool operator!=( self_type const& iter ) const {
             return iter.here != this->here;
         };
 
         //-------------------------------------------------------------------
         
     private:
-        SSLL<value_type>& ssl;
+        SSLLT ssl;
         Node* here;
+
+        SSLL_Iter( SSLLT &list, Node* start ) {
+            here = start;
+            ssl = list;
+        };
     };
 
 public:
-    typename List<E>::Iter* begin() override {
-        return SSL_Iter<E>::make_begin( *this ); 
+    // type aliases for prettier code
+    using iterator = SSLL_Iter<SSLL, E>;
+    using const_iterator = SSLL_Iter<SSLL const, E const>;
+    
+    // methods to create appropriate iterators
+    iterator begin() { 
+        return iterator::make_begin(*this); 
     };
-    typename List<E>::Iter* end() override {
-        return SSL_Iter<E>::make_end( *this ); 
+    iterator end() { 
+        return iterator::make_end(*this); 
+    };
+    
+    const_iterator begin() const { 
+        return const_iterator::make_begin(*this); 
+    };
+    const_iterator end() const {
+         return const_iterator::make_end(*this); 
     };
 
-    */
+
 };
 
 template <typename E>
