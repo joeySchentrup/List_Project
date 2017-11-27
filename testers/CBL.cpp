@@ -251,32 +251,39 @@ TEST_CASE("CBL: Push, Peek, and Pop on big data set") {
     }
 }
 
-/*
-//Test the iterator
-bool test5(List<int>* list, int x) {
+//Test the for each iterator
+TEST_CASE("CBL: Tests the iterators using for each") {
         
-    for(int i = 0; i < x; i++) {
+    CBL<int>* list = new CBL<int>();
+    for(int i = 0; i < 1000; i++) {
         list->push_front(i);
     }
     
-    int i = x - 1;
-    List<int>::Iter* begin = list->begin();
-    List<int>::Iter* end = list->end();
-    for(; begin != end; ++begin) {
-        if(**begin != i) {
-            std::cout << "    Test 4, Part 1: Failed. Looked at " << **begin << " in front but expected " << i << "." << std::endl;
-            debug(list);
-            return false;
-        }
-        --i;
+    int i = 999;
+    for(auto item : *list) 
+        REQUIRE(item == i--);
+}
+    
+//Test the begin and end and ++ operators
+TEST_CASE("CBL: Tests the iterators using begin and end and ++ operators") {
+        
+    CBL<int>* list = new CBL<int>();
+    for(int i = 0; i < 1000; i++) {
+        list->push_front(i);
     }
     
-    std::cout << "    Test 5, Part 1: Passed!" << std::endl;
-    std::cout << "Test 5: Passed!" << std::endl;
+    int i = 999;
+    
+    CBL<int>::CBL_Iter<CBL<int>,int> iter = list->begin();
+    CBL<int>::CBL_Iter<CBL<int>,int> end = list->end();
+    
+    for(; iter != end; iter++) 
+        REQUIRE(*iter == i--);
 
-    return true;
+    i = 999;
+    for(; iter != end; ++iter) 
+        REQUIRE(*iter == i--);
 }
-*/
 
 //Ten items in, tests contains and print
 TEST_CASE("CBL: Test Contains") {

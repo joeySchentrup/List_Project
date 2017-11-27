@@ -50,6 +50,99 @@ private:
     size_t previous_index(size_t index);
     size_t array_position(size_t position);
     void resize_check();
+
+public:
+    template < typename CBLT, typename T >
+    class CBL_Iter {
+    public:
+        using value_type = T;
+        using reference = T&;
+        using pointer = T*; 
+        using difference_type = std::ptrdiff_t;
+        using iterator_category = std::forward_iterator_tag;
+
+        using self_type = CBL_Iter;
+        using self_reference = CBL_Iter&;
+
+        // iterators over a non-const List
+        static self_type make_begin( CBL<value_type>& s) {
+            CBL_Iter i( s, s.head );
+            return i;
+        };
+
+        static self_type make_end( CBL<value_type>& s) {            
+            CBL_Iter i( s, s.tail );
+            return i;
+        };
+
+        //referencing ops-------------------------------------------------
+
+        reference operator*() const { return array[here]; };
+        pointer operator->() const { return &(operator*()); };
+
+        //incramentors----------------------------------------------------
+
+        self_reference operator++() { // preincrement
+            here = iter_next_index(here);
+            return *this;
+        };
+
+        self_type operator++(int) { // postincrement
+            self_type temp = *this;
+            here = iter_next_index(here);
+            return temp;
+        };
+
+        //equivalence ops--------------------------------------------------
+
+        bool operator==( self_type const& iter ) const {
+            return iter.here == this->here && iter.array == this->array;
+        };
+
+        bool operator!=( self_type const& iter ) const {
+            return iter.here != this->here || iter.array != this->array;
+        };
+
+        //-------------------------------------------------------------------
+        
+    private:
+        CBLT CBL;
+        size_t here;
+        T* array;
+
+        CBL_Iter( CBLT &list, size_t start ) {
+            CBL = list;
+            here = start;
+            array = list.array; 
+        };
+
+        size_t iter_next_index(size_t index) {
+            if(++index == CBL.length_of_array) 
+                return 0;
+            else
+            return index;
+        };
+    };
+
+public:
+    // type aliases for prettier code
+    using iterator = CBL_Iter<CBL, E>;
+    using const_iterator = CBL_Iter<CBL const, E const>;
+    
+    // methods to create appropriate iterators
+    iterator begin() { 
+        return iterator::make_begin(*this); 
+    };
+    iterator end() { 
+        return iterator::make_end(*this); 
+    };
+    
+    const_iterator begin() const { 
+        return const_iterator::make_begin(*this); 
+    };
+    const_iterator end() const {
+         return const_iterator::make_end(*this); 
+    };
 };
 
 //Public functions

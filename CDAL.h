@@ -53,6 +53,103 @@ private:
 
     Node* head;
     size_t tail;
+
+       /*All the functions in this iterator are defined in the iterator. I am unsure if there
+    is another way to get them further downt the file and out of the implamentation, but
+    this is the only way I found to get it to compile.*/
+public:
+    template < typename CDALT, typename T >
+    class CDAL_Iter {
+    public:
+        using value_type = T;
+        using reference = T&;
+        using pointer = T*; 
+        using difference_type = std::ptrdiff_t;
+        using iterator_category = std::forward_iterator_tag;
+
+        using self_type = CDAL_Iter;
+        using self_reference = CDAL_Iter&;
+
+        // iterators over a non-const List
+        static self_type make_begin( CDAL<value_type>& s) {
+            CDAL_Iter i( s, 0 );
+            return i;
+        };
+
+        static self_type make_end( CDAL<value_type>& s) {            
+            CDAL_Iter i( s, s.tail );
+            return i;
+        };
+
+        //referencing ops-------------------------------------------------
+
+        reference operator*() const { return here_node->data[here_number%ARRAY_SIZE]; };
+        pointer operator->() const { return &(operator*()); };
+
+        //incramentors----------------------------------------------------
+
+        self_reference operator++() { // preincrement
+            if(++here_number%ARRAY_SIZE == 0 && here_number != 0)
+                here_node = here_node->next;
+            return *this;
+        };
+
+        self_type operator++(int) { // postincrement
+            self_type temp = *this;
+            if(++here_number%ARRAY_SIZE == 0 && here_number != 0)
+                here_node = here_node->next;
+            return temp;
+        };
+
+        //equivalence ops--------------------------------------------------
+
+        bool operator==( self_type const& iter ) const {
+            return iter.here_number == this->here_number && iter.here_node == this->here_node;
+        };
+
+        bool operator!=( self_type const& iter ) const {
+            return iter.here_number != this->here_number || iter.here_node != this->here_node;
+        };
+
+        //-------------------------------------------------------------------
+        
+    private:
+        CDALT ssl;
+        Node* here_node;
+        size_t here_number;
+
+        CDAL_Iter( CDALT &list, size_t start ) {
+            here_number = start;
+            
+            int counter = -1;
+            here_node = list.head;
+            while(++counter != here_number/ARRAY_SIZE) 
+                here_node = here_node->next;
+
+            ssl = list;
+        };
+    };
+
+public:
+    // type aliases for prettier code
+    using iterator = CDAL_Iter<CDAL, E>;
+    using const_iterator = CDAL_Iter<CDAL const, E const>;
+    
+    // methods to create appropriate iterators
+    iterator begin() { 
+        return iterator::make_begin(*this); 
+    };
+    iterator end() { 
+        return iterator::make_end(*this); 
+    };
+    
+    const_iterator begin() const { 
+        return const_iterator::make_begin(*this); 
+    };
+    const_iterator end() const {
+         return const_iterator::make_end(*this); 
+    };
+
 };
 
 //Public functions
