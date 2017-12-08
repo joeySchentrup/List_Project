@@ -148,7 +148,7 @@ public:
 //Public functions
 
 template <typename E>
-CBL<E>::CBL(size_t size = 50) {
+CBL<E>::CBL(size_t size) {
     if(size < 2)
         throw std::runtime_error( "CBAL:In constructor: size needs to be at least 2." );
     

@@ -138,7 +138,7 @@ public:
 //Public functions
 
 template <typename E>
-SDAL<E>::SDAL(size_t size = 50) {
+SDAL<E>::SDAL(size_t size) {
     if(size < 2)
         throw std::runtime_error( "SDAL:In constructor: size needs to be at least 2." );
     
