@@ -9,7 +9,7 @@ namespace cop3530 {
 template < typename E >
 class SDAL : public List<E> {
 public:
-    SDAL(size_t size);
+    SDAL(size_t size = 50);
     ~SDAL() override;
     SDAL(SDAL<E>& sdal); //copy constructor
     SDAL(SDAL<E>&& sdal); //move constructor

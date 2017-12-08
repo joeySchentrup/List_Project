@@ -10,7 +10,7 @@ namespace cop3530 {
 template < typename E >
 class CBL : public List<E> {
 public:
-    CBL(size_t size);
+    CBL(size_t size = 50);
     ~CBL() override;
     CBL(CBL<E>& cbal); //copy constructor
     CBL(CBL<E>&& cbal); //move constructor
